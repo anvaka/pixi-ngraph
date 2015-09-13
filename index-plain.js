@@ -1,5 +1,4 @@
-var work = require('webworkify');
-var w = work(require('./workers/layout'));
+var plain = require('./workers/plain.js');
 var NodeMover = require('./modules/NodeMover').NodeMover;
 var PixiGraphics = require('./modules/PixiGraphics').PixiGraphics;
 
@@ -33,11 +32,11 @@ module.exports.main = function () {
         });
 
         var _layoutPositions = {};
-        w.addEventListener('message', function (ev) {
+        function updatePos(ev) {
             _layoutPositions = ev.data;
             _counts.layouts = _layoutPositions.i;
-        });
-        w.postMessage({jsonData: jsonData, iterations: _layoutIterations, stepsPerMessage: _layoutStepsPerMessage}); // when the worker is ready, kick things off
+        };
+        plain(jsonData);
 
         var graphics = new PixiGraphics(0.75, jsonData, function () {
             $.each(_nodeMovers, function (id, nodeMover) {
@@ -50,6 +49,7 @@ module.exports.main = function () {
         });
 
         function renderFrame() {
+            plain.step(updatePos);
             graphics.renderFrame();
             _counts.renders++;
             _updateInfo();

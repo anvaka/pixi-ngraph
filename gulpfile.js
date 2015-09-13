@@ -13,6 +13,15 @@ gulp.task('default', function () {
         .pipe(source('bundle.js'))
         .pipe(gulp.dest('./dist/js/'));
 
+    var b = browserify({
+        entries: './index-plain.js',
+        debug: true,
+        standalone: 'ngraph'
+    });
+
+    b.bundle()
+        .pipe(source('bundle-plain.js'))
+        .pipe(gulp.dest('./dist/js/'));
 });
 
 //gulp.start('default');
